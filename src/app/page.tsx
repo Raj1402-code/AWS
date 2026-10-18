@@ -196,8 +196,8 @@ function TripWiseContent() {
   };
 
   return (
-    <div className="relative min-h-screen bg-space-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20">
-      {/* Background with React Bits WebGL Particles */}
+    <div className="relative min-h-screen bg-transparent text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20">
+      {/* Background with React Bits WebGL Particles and Cosmic Glow */}
       <AntigravityBackground />
 
       {/* Floating Glass Navbar with HoldButton */}

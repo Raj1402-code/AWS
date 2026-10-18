@@ -10,7 +10,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: radial-gradient(circle at 50% 15%, #141b4d 0%, #080b21 50%, #03040c 100%);
+  background: radial-gradient(ellipse at 50% 15%, #182266 0%, #0c1236 45%, #050716 100%);
   min-height: 100vh;
   overflow-x: hidden;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
