@@ -14,6 +14,7 @@ import {
   Compass
 } from 'lucide-react';
 import { Continent, Category, FilterOptions } from '@/types/trip';
+import { MagneticButton } from './MagneticButton';
 
 interface SearchBarProps {
   filters: FilterOptions;
@@ -65,7 +66,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           animate={{ y: 0, opacity: 1 }}
           className="glass-panel rounded-2xl p-3 sm:p-4 shadow-2xl border border-white/15 backdrop-blur-xl"
         >
-          {/* Main search and quick controls */}
+          {/* Main search and controls */}
           <div className="flex flex-col md:flex-row items-center gap-3">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
@@ -77,7 +78,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                   onChangeFilters((prev) => ({ ...prev, searchQuery: e.target.value }))
                 }
                 placeholder="Search by city, country, vibe (e.g. Kyoto, balloons, aurora)..."
-                className="w-full pl-10 pr-9 py-2.5 rounded-xl glass-input text-sm placeholder-slate-400 focus:ring-1 focus:ring-cyan-400"
+                className="w-full pl-10 pr-9 py-2.5 rounded-xl glass-input text-sm placeholder-slate-400 focus:ring-1 focus:ring-cyan-400 transition-all"
               />
               {filters.searchQuery && (
                 <button
@@ -112,11 +113,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cyan-400 pointer-events-none" />
               </div>
 
-              {/* Advanced Filter Toggle */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+              {/* Advanced Filter Toggle with Magnetic Pull */}
+              <MagneticButton
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                magneticRadius={45}
                 className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                   showAdvancedFilters || activeFiltersCount > 0
                     ? 'bg-cyan-500/25 border border-cyan-400/50 text-cyan-200 shadow-glow-cyan'
@@ -126,16 +126,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-300" />
                 <span className="hidden sm:inline">Filters</span>
                 {activeFiltersCount > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-[11px]">
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-5 h-5 rounded-full bg-cyan-400 text-space-950 font-bold flex items-center justify-center text-[11px]"
+                  >
                     {activeFiltersCount}
-                  </span>
+                  </motion.span>
                 )}
-              </motion.button>
+              </MagneticButton>
             </div>
           </div>
 
-          {/* Category Horizontal Scroll Pills */}
-          <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+          {/* Morphing Category Filter Pills with layoutId */}
+          <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 no-scrollbar relative">
             {CATEGORIES.map((cat) => {
               const isSelected = filters.category === cat.label;
               return (
@@ -147,14 +151,26 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                       category: isSelected && cat.label !== 'All' ? 'All' : cat.label,
                     }))
                   }
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-                    isSelected
-                      ? 'glass-pill-active text-cyan-200'
-                      : 'glass-pill text-slate-300 hover:text-white'
-                  }`}
+                  className="relative px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors z-10 text-slate-300 hover:text-white"
                 >
-                  <span>{cat.icon}</span>
-                  <span>{cat.label}</span>
+                  {/* Fluid Morphing Background Pill using Framer Motion layoutId */}
+                  {isSelected && (
+                    <motion.div
+                      layoutId="activeCategoryPill"
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 30,
+                      }}
+                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-500/30 to-purple-600/30 border border-cyan-400/50 shadow-glow-cyan -z-10"
+                    />
+                  )}
+                  <span className="flex items-center gap-1.5 relative z-10">
+                    <span>{cat.icon}</span>
+                    <span className={isSelected ? 'text-cyan-200 font-semibold' : ''}>
+                      {cat.label}
+                    </span>
+                  </span>
                 </button>
               );
             })}
@@ -167,30 +183,38 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="overflow-hidden border-t border-white/10 mt-3 pt-4"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                  {/* Continent Filter */}
+                  {/* Continent Filter with Morphing Pill */}
                   <div>
                     <label className="flex items-center gap-1.5 text-slate-300 mb-2 font-medium">
                       <Globe2 className="w-3.5 h-3.5 text-cyan-400" />
                       Continent / Region
                     </label>
                     <div className="flex flex-wrap gap-1.5">
-                      {CONTINENTS.map((c) => (
-                        <button
-                          key={c}
-                          onClick={() => onChangeFilters((prev) => ({ ...prev, continent: c }))}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                            filters.continent === c
-                              ? 'bg-purple-500/30 border border-purple-400/50 text-purple-200'
-                              : 'bg-white/5 hover:bg-white/10 text-slate-400'
-                          }`}
-                        >
-                          {c}
-                        </button>
-                      ))}
+                      {CONTINENTS.map((c) => {
+                        const isSelected = filters.continent === c;
+                        return (
+                          <button
+                            key={c}
+                            onClick={() => onChangeFilters((prev) => ({ ...prev, continent: c }))}
+                            className="relative px-2.5 py-1 rounded-lg text-xs font-medium transition-colors text-slate-300 hover:text-white"
+                          >
+                            {isSelected && (
+                              <motion.div
+                                layoutId="activeContinentPill"
+                                transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                                className="absolute inset-0 rounded-lg bg-purple-500/35 border border-purple-400/60 shadow-glow-purple -z-10"
+                              />
+                            )}
+                            <span className={isSelected ? 'text-purple-200 font-semibold' : ''}>
+                              {c}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -220,34 +244,42 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                       className="w-full accent-cyan-400 cursor-pointer h-1.5 bg-white/10 rounded-lg"
                     />
                     <div className="flex justify-between text-[10px] text-slate-500 mt-1">
-                      <span>$50 (Backpacker)</span>
+                      <span>$50</span>
                       <span>$250</span>
                       <span>$500+ (Luxury)</span>
                     </div>
                   </div>
 
-                  {/* Minimum Rating */}
+                  {/* Minimum Rating with Morphing Pill */}
                   <div>
                     <label className="flex items-center gap-1.5 text-slate-300 mb-2 font-medium">
                       <Star className="w-3.5 h-3.5 text-amber-400" />
                       Minimum Rating
                     </label>
                     <div className="flex items-center gap-1.5">
-                      {[0, 4.5, 4.8, 4.9].map((rate) => (
-                        <button
-                          key={rate}
-                          onClick={() =>
-                            onChangeFilters((prev) => ({ ...prev, minRating: rate }))
-                          }
-                          className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium transition-all text-center ${
-                            filters.minRating === rate
-                              ? 'bg-amber-500/25 border border-amber-400/50 text-amber-200'
-                              : 'bg-white/5 hover:bg-white/10 text-slate-400'
-                          }`}
-                        >
-                          {rate === 0 ? 'Any' : `${rate}★+`}
-                        </button>
-                      ))}
+                      {[0, 4.5, 4.8, 4.9].map((rate) => {
+                        const isSelected = filters.minRating === rate;
+                        return (
+                          <button
+                            key={rate}
+                            onClick={() =>
+                              onChangeFilters((prev) => ({ ...prev, minRating: rate }))
+                            }
+                            className="relative flex-1 py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-colors text-slate-400 hover:text-white"
+                          >
+                            {isSelected && (
+                              <motion.div
+                                layoutId="activeRatingPill"
+                                transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                                className="absolute inset-0 rounded-lg bg-amber-500/25 border border-amber-400/60 shadow-md -z-10"
+                              />
+                            )}
+                            <span className={isSelected ? 'text-amber-200 font-bold' : ''}>
+                              {rate === 0 ? 'Any' : `${rate}★+`}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -258,12 +290,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     Showing <strong className="text-cyan-300">{totalResults}</strong> gravitational destinations
                   </span>
                   {activeFiltersCount > 0 && (
-                    <button
+                    <MagneticButton
                       onClick={onResetFilters}
+                      magneticRadius={40}
                       className="text-pink-400 hover:text-pink-300 underline font-medium flex items-center gap-1"
                     >
                       Reset all filters
-                    </button>
+                    </MagneticButton>
                   )}
                 </div>
               </motion.div>

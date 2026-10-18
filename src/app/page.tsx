@@ -1,21 +1,20 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useTransition } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { 
   Sparkles, 
   Compass, 
-  MapPin, 
-  Luggage, 
   Globe, 
-  ShieldCheck, 
   Zap, 
   HeartHandshake,
   ArrowDown
 } from 'lucide-react';
 
 import { Destination, FilterOptions, ItineraryItem } from '@/types/trip';
+import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
+import { FlightAnimationProvider, useFlightAnimation } from '@/components/FlightAnimation';
 import { AntigravityBackground } from '@/components/AntigravityBackground';
 import { Navbar } from '@/components/Navbar';
 import { SearchBar } from '@/components/SearchBar';
@@ -25,6 +24,7 @@ import { ItineraryDrawer } from '@/components/ItineraryDrawer';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
+import { MagneticButton } from '@/components/MagneticButton';
 
 const LOCAL_STORAGE_KEY = 'trip_wise_itinerary_v1';
 
@@ -37,7 +37,7 @@ const DEFAULT_FILTERS: FilterOptions = {
   sortBy: 'featured',
 };
 
-export default function Home() {
+function TripWiseContent() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -119,16 +119,16 @@ export default function Home() {
       const filtered = itinerary.filter((item) => item.destination.id !== dest.id);
       saveItinerary(filtered);
     } else {
-      // Trigger confetti celebration on adding to trip!
+      // Confetti burst
       try {
         confetti({
-          particleCount: 50,
+          particleCount: 45,
           spread: 60,
           origin: { y: 0.8 },
           colors: ['#38bdf8', '#a855f7', '#10b981', '#ec4899'],
         });
       } catch (err) {
-        // ignore if canvas-confetti isn't supported
+        // ignore
       }
 
       const newItem: ItineraryItem = {
@@ -143,6 +143,10 @@ export default function Home() {
 
   const handleRemoveItineraryItem = (id: string) => {
     saveItinerary(itinerary.filter((item) => item.id !== id));
+  };
+
+  const handleReorderItinerary = (newOrder: ItineraryItem[]) => {
+    saveItinerary(newOrder);
   };
 
   const handleUpdatePlannedDays = (id: string, days: number) => {
@@ -172,19 +176,19 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-space-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20">
-      {/* Background Physics / Particle Canvas */}
+      {/* Background Physics / Particle Canvas & Drifting Ambient Orbs */}
       <AntigravityBackground />
 
-      {/* Floating Glass Navbar */}
+      {/* Floating Glass Navbar with Magnetic Buttons */}
       <Navbar
         itineraryCount={itinerary.length}
         onOpenItinerary={() => setIsItineraryOpen(true)}
         onScrollToExplore={scrollToExplore}
       />
 
-      {/* Hero Section with Antigravity Elements */}
+      {/* Hero Section */}
       <section className="relative z-10 pt-12 pb-8 px-4 sm:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
-        {/* Anti-gravity Floating Pill */}
+        {/* Anti-gravity Floating Pill with Magnetic pull */}
         <motion.div
           animate={{
             y: [0, -8, 0],
@@ -203,9 +207,9 @@ export default function Home() {
 
         {/* Hero Title */}
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-[1.1]"
         >
           Explore Earth&apos;s wonders in{' '}
@@ -218,17 +222,17 @@ export default function Home() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
+          transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mb-8"
         >
-          Discover handpicked global destinations with smooth physics, 3D interactive tilt cards, and a persistent travel canvas tailored to your wanderlust.
+          Discover handpicked global destinations with smooth momentum scrolling, 3D cursor tracking tilt cards, and a persistent travel canvas tailored to your wanderlust.
         </motion.p>
 
         {/* Quick Highlights / Stats Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.65, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full max-w-3xl mb-8"
         >
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
@@ -246,7 +250,7 @@ export default function Home() {
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
             <Compass className="w-4 h-4 text-pink-400 mb-1" />
             <span className="text-base font-black text-white">3D Tilt Cards</span>
-            <span className="text-[10px] text-slate-400">Physics Based</span>
+            <span className="text-[10px] text-slate-400">Spring Physics</span>
           </div>
 
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
@@ -256,17 +260,18 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {/* Scroll indicator */}
-        <button
+        {/* Scroll indicator with Magnetic pull */}
+        <MagneticButton
           onClick={scrollToExplore}
-          className="flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-cyan-300 transition-colors"
+          magneticRadius={45}
+          className="flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-cyan-300 transition-colors py-2 px-3 rounded-xl"
         >
           <span>Explore Destinations Below</span>
           <ArrowDown className="w-3.5 h-3.5 animate-bounce text-cyan-400" />
-        </button>
+        </MagneticButton>
       </section>
 
-      {/* Sticky Search & Filter Bar */}
+      {/* Sticky Search & Morphing Filter Bar */}
       <SearchBar
         filters={filters}
         onChangeFilters={setFilters}
@@ -274,7 +279,7 @@ export default function Home() {
         totalResults={destinations.length}
       />
 
-      {/* Main Destination Exploration Grid */}
+      {/* Main Destination Exploration Grid with Automatic Grid Reordering */}
       <main id="destinations-grid" className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-8 w-full">
         {/* Loading State */}
         {loading && <LoadingSkeleton />}
@@ -292,45 +297,51 @@ export default function Home() {
           />
         )}
 
-        {/* Destination Cards Layout */}
+        {/* Destination Cards Layout with Automatic Reordering and Smooth Morphing */}
         {!loading && !error && destinations.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
-            {destinations.map((destination, index) => {
-              const isSaved = itinerary.some(
-                (item) => item.destination.id === destination.id
-              );
-              return (
-                <DestinationCard
-                  key={destination.id}
-                  destination={destination}
-                  index={index}
-                  isSaved={isSaved}
-                  onSelect={(dest) => setSelectedDestination(dest)}
-                  onToggleItinerary={handleToggleItinerary}
-                />
-              );
-            })}
-          </div>
+          <motion.div
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {destinations.map((destination, index) => {
+                const isSaved = itinerary.some(
+                  (item) => item.destination.id === destination.id
+                );
+                return (
+                  <DestinationCard
+                    key={destination.id}
+                    destination={destination}
+                    index={index}
+                    isSaved={isSaved}
+                    onSelect={(dest) => setSelectedDestination(dest)}
+                    onToggleItinerary={handleToggleItinerary}
+                  />
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
         )}
       </main>
 
-      {/* Destination Details Modal */}
-      <DestinationModal
-        destination={selectedDestination}
-        onClose={() => setSelectedDestination(null)}
-        isSaved={
-          selectedDestination
-            ? itinerary.some((i) => i.destination.id === selectedDestination.id)
-            : false
-        }
-        onToggleItinerary={(dest) => handleToggleItinerary(dest)}
-      />
+      {/* Shared Layout Portal Destination Details Modal */}
+      <AnimatePresence>
+        {selectedDestination && (
+          <DestinationModal
+            destination={selectedDestination}
+            onClose={() => setSelectedDestination(null)}
+            isSaved={itinerary.some((i) => i.destination.id === selectedDestination.id)}
+            onToggleItinerary={(dest) => handleToggleItinerary(dest)}
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Itinerary Management Drawer ("My Trip") */}
+      {/* Itinerary Management Drawer ("My Trip") with Drag-to-Reorder & Mobile Bottom Sheet */}
       <ItineraryDrawer
         isOpen={isItineraryOpen}
         onClose={() => setIsItineraryOpen(false)}
         itinerary={itinerary}
+        onReorder={handleReorderItinerary}
         onRemoveItem={handleRemoveItineraryItem}
         onUpdateDays={handleUpdatePlannedDays}
         onClearAll={handleClearAllItinerary}
@@ -349,12 +360,22 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-4 text-slate-500">
-            <span>Powered by Next.js, Tailwind CSS & Framer Motion</span>
+            <span>Powered by Next.js, Tailwind CSS, Framer Motion, GSAP & Lenis</span>
             <span>•</span>
-            <span className="text-cyan-400/80">October 2026 Edition</span>
+            <span className="text-cyan-400/80">Zero-G Edition</span>
           </div>
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <SmoothScrollProvider>
+      <FlightAnimationProvider>
+        <TripWiseContent />
+      </FlightAnimationProvider>
+    </SmoothScrollProvider>
   );
 }

@@ -2,7 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Compass, Sparkles, MapPin, Luggage, BookmarkCheck } from 'lucide-react';
+import { Compass, Sparkles, Luggage } from 'lucide-react';
+import { MagneticButton } from './MagneticButton';
+import { useFlightAnimation } from './FlightAnimation';
 
 interface NavbarProps {
   itineraryCount: number;
@@ -15,6 +17,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenItinerary,
   onScrollToExplore,
 }) => {
+  const { isBadgeBouncing } = useFlightAnimation();
+
   return (
     <header className="sticky top-0 z-40 w-full px-4 sm:px-8 py-3.5 transition-all duration-300">
       <div className="max-w-7xl mx-auto glass-panel rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between shadow-2xl border border-white/15">
@@ -33,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-500 p-[1.5px] shadow-glow-cyan"
+            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-500 p-[1.5px] shadow-glow-cyan"
           >
             <div className="w-full h-full bg-space-950/80 rounded-[10px] flex items-center justify-center backdrop-blur-md">
               <Compass className="w-5 h-5 text-cyan-300 group-hover:rotate-45 transition-transform duration-500" />
@@ -55,41 +59,49 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons with Magnetic Pull */}
         <div className="flex items-center gap-3">
-          {/* Explore shortcut */}
-          <button
+          {/* Explore shortcut with magnetic pull */}
+          <MagneticButton
             onClick={onScrollToExplore}
+            magneticRadius={50}
             className="hidden md:flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white glass-pill rounded-xl"
           >
             <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             <span>Discover</span>
-          </button>
+          </MagneticButton>
 
-          {/* My Trip / Itinerary Trigger */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          {/* My Trip Magnetic Button */}
+          <MagneticButton
             onClick={onOpenItinerary}
-            className="relative flex items-center gap-2.5 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 via-purple-600/25 to-pink-500/20 hover:from-cyan-500/30 hover:to-pink-500/30 border border-cyan-400/30 text-white font-medium text-sm shadow-glass transition-all duration-300 group"
+            magneticRadius={65}
+            magneticStrength={0.4}
+            className="relative flex items-center gap-2.5 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 via-purple-600/25 to-pink-500/20 hover:from-cyan-500/35 hover:to-pink-500/35 border border-cyan-400/40 text-white font-medium text-sm shadow-glass transition-all group"
           >
             <Luggage className="w-4 h-4 text-cyan-300 group-hover:-translate-y-0.5 transition-transform" />
             <span className="tracking-wide">My Trip</span>
 
-            {/* Badge Counter */}
-            <motion.span
-              key={itineraryCount}
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+            {/* Target Badge for Flight Animation */}
+            <motion.div
+              id="nav-my-trip-badge"
+              animate={
+                isBadgeBouncing
+                  ? {
+                      scale: [1, 1.5, 0.85, 1.2, 1],
+                      rotate: [0, -12, 12, -6, 0],
+                    }
+                  : { scale: 1, rotate: 0 }
+              }
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              className={`flex items-center justify-center min-w-[22px] h-5 px-1.5 text-xs font-bold rounded-full ${
                 itineraryCount > 0
                   ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-space-950 shadow-glow-cyan'
                   : 'bg-white/10 text-slate-400'
               }`}
             >
               {itineraryCount}
-            </motion.span>
-          </motion.button>
+            </motion.div>
+          </MagneticButton>
         </div>
       </div>
     </header>
