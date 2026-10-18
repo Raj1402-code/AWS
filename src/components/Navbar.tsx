@@ -37,12 +37,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="w-11 h-11 rounded-xl overflow-hidden border border-cyan-400/30 p-0.5 bg-space-900/70 shadow-glow-cyan flex items-center justify-center shrink-0"
+            className="w-12 h-12 rounded-2xl overflow-hidden border border-cyan-400/40 p-1.5 bg-gradient-to-br from-cyan-950/60 to-space-950/80 shadow-glow-cyan flex items-center justify-center shrink-0 group-hover:border-cyan-400/70 transition-all duration-300"
           >
             <img
               src="/logo.png"
               alt="TripWise Logo"
-              className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(56,189,248,0.4)] group-hover:scale-105 transition-transform duration-300"
             />
           </motion.div>
 

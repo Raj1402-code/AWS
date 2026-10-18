@@ -304,7 +304,7 @@ const Particles = ({
   drift = 'none',
   driftSpeed = 1,
   variation = 0,
-  intro = true,
+  intro = false,
   opacity = 1,
   lightMode = false,
   paused = false,
@@ -818,7 +818,8 @@ const Particles = ({
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
     const intersection = new IntersectionObserver(entries => {
-      visible = entries.some(entry => entry.isIntersecting);
+      const isAnyIntersecting = entries.some(entry => entry.isIntersecting);
+      visible = isAnyIntersecting || (container.clientWidth > 0 && container.clientHeight > 0);
       if (visible) {
         last = 0;
         wake();
@@ -831,7 +832,9 @@ const Particles = ({
     window.addEventListener('pointercancel', onPointerUp, { passive: true });
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
     document.addEventListener('visibilitychange', onVisibility);
+    visible = true;
     resize();
+    wake();
 
     let lastDpr = settingsRef.current.dpr;
     wakeRef.current = () => {
