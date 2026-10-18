@@ -378,9 +378,9 @@ function TripWiseContent() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 mt-20 py-8 px-4 sm:px-8 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-300">
-              <Compass className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg overflow-hidden border border-cyan-400/30 p-0.5 bg-space-900/60 flex items-center justify-center">
+              <img src="/logo.png" alt="TripWise Logo" className="w-full h-full object-contain rounded" />
             </div>
             <span className="font-bold text-slate-200">Trip Wise</span>
             <span>— Smart Travel Planner</span>

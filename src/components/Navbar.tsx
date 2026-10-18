@@ -31,18 +31,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           <motion.div
             animate={{
               y: [0, -3, 0],
-              rotate: [0, 6, -6, 0],
             }}
             transition={{
-              duration: 6,
+              duration: 4,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-500 p-[1.5px] shadow-glow-cyan"
+            className="w-11 h-11 rounded-xl overflow-hidden border border-cyan-400/30 p-0.5 bg-space-900/70 shadow-glow-cyan flex items-center justify-center shrink-0"
           >
-            <div className="w-full h-full bg-space-950/80 rounded-[10px] flex items-center justify-center backdrop-blur-md">
-              <Compass className="w-5 h-5 text-cyan-300 group-hover:rotate-45 transition-transform duration-500" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="TripWise Logo"
+              className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
+            />
           </motion.div>
 
           <div>

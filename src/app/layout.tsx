@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   description:
     'Explore curated global destinations with interactive 3D preview cards, instant search, multi-factor filtering, and persistent itinerary planning.',
   keywords: ['travel', 'planner', 'trip wise', 'destinations', 'itinerary', 'vacation'],
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
 };
 
 export default function RootLayout({
