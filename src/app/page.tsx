@@ -26,6 +26,7 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { MagneticButton } from '@/components/MagneticButton';
+import TechText from '@/components/TechText';
 
 const LOCAL_STORAGE_KEY = 'trip_wise_itinerary_v1';
 
@@ -60,7 +61,6 @@ function TripWiseContent() {
     } catch (e) {
       console.warn('Failed to load itinerary from localStorage:', e);
     }
-    // Pure frontend initial mount simulation
     const timer = setTimeout(() => {
       setLoading(false);
     }, 400);
@@ -77,7 +77,7 @@ function TripWiseContent() {
     }
   };
 
-  // 3. Pure Frontend Client-side Search, Filter & Sort Logic (No Backend Needed)
+  // 3. Client-side Search, Filter & Sort Logic (100% Frontend)
   const filteredDestinations = useMemo(() => {
     let list = [...INITIAL_DESTINATIONS];
 
@@ -197,18 +197,18 @@ function TripWiseContent() {
 
   return (
     <div className="relative min-h-screen bg-space-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20">
-      {/* Background with React Bits Particles and Ambient Glowing Orbs */}
+      {/* Background with React Bits WebGL Particles */}
       <AntigravityBackground />
 
-      {/* Floating Glass Navbar with Magnetic Buttons */}
+      {/* Floating Glass Navbar with HoldButton */}
       <Navbar
         itineraryCount={itinerary.length}
         onOpenItinerary={() => setIsItineraryOpen(true)}
         onScrollToExplore={scrollToExplore}
       />
 
-      {/* Hero Section */}
-      <section className="relative z-10 pt-14 pb-8 px-4 sm:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
+      {/* Hero Section with React Bits TechText in the Centre */}
+      <section className="relative z-10 pt-10 pb-6 px-4 sm:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
         {/* Floating Top Badge */}
         <motion.div
           animate={{
@@ -219,39 +219,45 @@ function TripWiseContent() {
             repeat: Infinity,
             ease: 'easeInOut',
           }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-cyan-400/30 text-cyan-300 text-xs font-semibold shadow-glow-cyan mb-6"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-cyan-400/30 text-cyan-300 text-xs font-semibold shadow-glow-cyan mb-4"
         >
           <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
           <span>Curated Travel Planning • Live Discovery</span>
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
         </motion.div>
 
-        {/* Hero Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-[1.1]"
-        >
-          Plan your journey with{' '}
-          <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-sm">
-            effortless elegance.
-          </span>
-        </motion.h1>
+        {/* Centre Wordmark: React Bits TechText Component */}
+        <div className="w-full max-w-3xl h-32 sm:h-40 md:h-48 relative my-2 flex items-center justify-center">
+          <TechText
+            text="TRIP WISE"
+            fontWeight={800}
+            fontSize={130}
+            reveal="letter"
+            dashLength={4}
+            dashGap={2}
+            specks={15}
+            intro="none"
+            clickKick={true}
+            draggable={true}
+            guides={false}
+            color="#ffffff"
+            accentColor="#38bdf8"
+          />
+        </div>
 
         {/* Hero Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mb-8"
+          className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mb-8 mt-2"
         >
           Discover handpicked global destinations, explore interactive 3D preview cards, and craft a personalized travel itinerary saved directly in your browser.
         </motion.p>
 
         {/* Quick Highlights / Stats Bar */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full max-w-3xl mb-8"

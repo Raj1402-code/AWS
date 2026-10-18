@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Compass, Sparkles, Luggage } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
+import HoldButton from './HoldButton';
 import { useFlightAnimation } from './FlightAnimation';
 
 interface NavbarProps {
@@ -56,49 +57,66 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons with Magnetic Pull */}
+        {/* Action Buttons */}
         <div className="flex items-center gap-3">
           {/* Explore shortcut with magnetic pull */}
           <MagneticButton
             onClick={onScrollToExplore}
             magneticRadius={50}
-            className="hidden md:flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white glass-pill rounded-xl"
+            className="hidden md:flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white glass-pill rounded-xl"
           >
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
             <span>Explore</span>
           </MagneticButton>
 
-          {/* My Trip Magnetic Button */}
-          <MagneticButton
-            onClick={onOpenItinerary}
-            magneticRadius={65}
-            magneticStrength={0.4}
-            className="relative flex items-center gap-2.5 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 via-purple-600/25 to-pink-500/20 hover:from-cyan-500/35 hover:to-pink-500/35 border border-cyan-400/40 text-white font-medium text-sm shadow-glass transition-all group"
-          >
-            <Luggage className="w-4 h-4 text-cyan-300 group-hover:-translate-y-0.5 transition-transform" />
-            <span className="tracking-wide">My Trip</span>
-
-            {/* Target Badge for Flight Animation */}
-            <motion.div
-              id="nav-my-trip-badge"
-              animate={
-                isBadgeBouncing
-                  ? {
-                      scale: [1, 1.5, 0.85, 1.2, 1],
-                      rotate: [0, -12, 12, -6, 0],
-                    }
-                  : { scale: 1, rotate: 0 }
-              }
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-              className={`flex items-center justify-center min-w-[22px] h-5 px-1.5 text-xs font-bold rounded-full ${
-                itineraryCount > 0
-                  ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-space-950 shadow-glow-cyan'
-                  : 'bg-white/10 text-slate-400'
-              }`}
+          {/* My Trip HoldButton from React Bits */}
+          <div className="relative">
+            <HoldButton
+              doneLabel="Opened"
+              backgroundColor="rgba(16, 22, 58, 0.75)"
+              fillColor="#38bdf8"
+              textColor="#f5f5f5"
+              fillTextColor="#050714"
+              size="sm"
+              radius={14}
+              fillDirection="right"
+              holdTime={1200}
+              releaseTime={200}
+              pressScale={0.96}
+              wave={true}
+              waveAmplitude={5}
+              glow={true}
+              resetAfter={1000}
+              onHold={onOpenItinerary}
+              onTap={onOpenItinerary}
+              className="border border-cyan-400/40 shadow-glass"
             >
-              {itineraryCount}
-            </motion.div>
-          </MagneticButton>
+              <span className="flex items-center gap-2">
+                <Luggage className="w-4 h-4 text-cyan-300" />
+                <span className="font-semibold text-xs tracking-wide">My Trip</span>
+                {/* Target Badge for Flight Animation */}
+                <motion.span
+                  id="nav-my-trip-badge"
+                  animate={
+                    isBadgeBouncing
+                      ? {
+                          scale: [1, 1.5, 0.85, 1.2, 1],
+                          rotate: [0, -12, 12, -6, 0],
+                        }
+                      : { scale: 1, rotate: 0 }
+                  }
+                  transition={{ duration: 0.55, ease: 'easeOut' }}
+                  className={`flex items-center justify-center min-w-[20px] h-4 px-1 text-[10px] font-bold rounded-full ${
+                    itineraryCount > 0
+                      ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-space-950 shadow-glow-cyan'
+                      : 'bg-white/15 text-slate-400'
+                  }`}
+                >
+                  {itineraryCount}
+                </motion.span>
+              </span>
+            </HoldButton>
+          </div>
         </div>
       </div>
     </header>
