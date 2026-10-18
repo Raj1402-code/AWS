@@ -323,7 +323,7 @@ export const DestinationModal: React.FC<DestinationModalProps> = ({
               >
                 <div className="text-xs text-slate-400 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Zero-gravity trajectory ready</span>
+                  <span>Instant itinerary sync</span>
                 </div>
 
                 <MagneticButton

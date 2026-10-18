@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Trip Wise | Smart Zero-Gravity Travel Planner',
+  title: 'Trip Wise — Smart Travel Planner & Itinerary Builder',
   description:
-    'Explore breathtaking destinations with antigravity physics, smart filtering, and persistent interactive itinerary planning.',
-  keywords: ['travel', 'planner', 'trip wise', 'antigravity', 'destinations', 'itinerary'],
+    'Explore curated global destinations with interactive 3D preview cards, instant search, multi-factor filtering, and persistent itinerary planning.',
+  keywords: ['travel', 'planner', 'trip wise', 'destinations', 'itinerary', 'vacation'],
 };
 
 export default function RootLayout({

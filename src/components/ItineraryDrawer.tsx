@@ -71,7 +71,7 @@ export const ItineraryDrawer: React.FC<ItineraryDrawerProps> = ({
           `${idx + 1}. ${item.destination.name}, ${item.destination.country} (${item.plannedDays} days @ $${item.destination.dailyBudget}/day = $${item.plannedDays * item.destination.dailyBudget})`
       ),
       `----------------------------------------`,
-      `Crafted with Trip Wise Zero-G Travel Planner`,
+      `Crafted with Trip Wise Travel Planner`,
     ].join('\n');
 
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -182,7 +182,7 @@ export const ItineraryDrawer: React.FC<ItineraryDrawerProps> = ({
                         Your itinerary is empty
                       </h3>
                       <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-                        Defy the ordinary! Click the <strong>+</strong> button on any floating destination card to assemble your dream cosmic journey.
+                        Start planning your journey! Click the <strong>+</strong> button on any destination card to add it to your trip.
                       </p>
                     </div>
                   </div>

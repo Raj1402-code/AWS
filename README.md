@@ -1,80 +1,71 @@
-# 🌌 Trip Wise — Smart Zero-Gravity Travel Planner
+# 🌐 Trip Wise — Smart Travel Planner
 
-**Trip Wise** is a smart travel planner web application built with **React / Next.js**, **Tailwind CSS**, and **Framer Motion**, rendered in a zero-gravity **"antigravity" aesthetic**.
+**Trip Wise** is a modern, responsive travel planning web application built with **React / Next.js**, **Tailwind CSS**, **Framer Motion**, and **WebGL2 Particles**.
 
-It features floating cosmic UI elements, smooth physics-based 3D hover effects, glassmorphic card layouts, and an interactive itinerary manager that persists directly in your browser.
+Designed with clean glassmorphic interfaces, interactive 3D physics hover effects, momentum scrolling, and persistent local storage itinerary management — all running **100% on the frontend with zero backend dependencies**.
 
 ---
 
-## 🚀 Key Features
+## ✨ Features
 
-### 1. 🪐 Destination Exploration & Antigravity Physics
-- **Gentle Zero-G Floating:** Every destination card floats gently up and down with organic staggered intervals (`y: [0, -10, 0]`), creating an atmospheric zero-gravity feeling.
-- **3D Physics-Based Tilt on Hover:** Cards use Framer Motion springs (`useMotionValue`, `useSpring`, `useTransform`) to react to cursor movements with realistic dynamic specular glare.
-- **Rich Destination Data:** Curated collection of world destinations with coordinates, high-resolution imagery, best seasons, climate indicators, budget tiers, and top highlights.
-- **External API Compatibility:** Integrates with Next.js API route (`/api/destinations`), supporting live OpenTripMap or Geoapify providers with fallback.
+### 1. 🌍 Destination Exploration
+- **Interactive 3D Hover Tilt:** Cards react in real-time to cursor movements using spring physics and dynamic specular glare.
+- **Continuous Ambient Float:** Staggered floating animations across cards create a weightless aesthetic.
+- **Curated World Destinations:** Handcrafted destination guides featuring high-resolution photography, climate details, GPS coordinates, budget ratings, and top highlights.
+- **WebGL2 Interactive Particle Background:** Powered by the open-source `<Particles />` component from React Bits with parallax hover reaction and click light bursts.
 
-### 2. 🔍 Search, Filter, and Sort
-- **Sticky Glassmorphic Search Bar:** Glides gracefully over the viewport with backdrop-blur and cosmic glow.
-- **Instant Search:** Search across destination titles, countries, vibes, and keywords with debounced live querying.
-- **Multi-dimensional Filters:**
-  - **Category Pills:** Beach & Island, Mountain & Nature, Historic & Heritage, Futuristic City, Culinary & Art.
-  - **Continents:** Europe, Asia, Americas, Africa, Oceania.
-  - **Max Daily Budget Slider:** Custom range from $50 (Backpacker) to $500+ (Luxury).
-  - **Minimum Rating:** Filter by 4.5★+, 4.8★+, or 4.9★+.
-- **Dynamic Sorting Options:**
-  - ⭐ Top Featured
-  - 🌟 Highest Rated (Desc)
-  - 💸 Budget: Low to High
-  - 💎 Budget: High to Low
-  - 🔤 Alphabetical (A-Z)
-- **Active Filter Badges & Quick Reset:** Clear all filters with a single click.
+### 2. 🔍 Instant Search, Filter & Sort
+- **Sticky Glassmorphic Search Bar:** Quick debounced search across destination names, countries, tags, and vibes.
+- **Fluid Morphing Filter Pills:** Smooth sliding indicator using Framer Motion `layoutId` transitions.
+- **Multi-Category Filtering:** Filter by Continent (Europe, Asia, Americas, Africa, Oceania), Category (Beach, Mountain, Historic, City, Culinary), Budget slider ($50 to $500+/day), and Minimum Rating.
+- **Dynamic Sorting:** Sort by Featured, Highest Rated, Budget (Low to High / High to Low), and Alphabetical (A-Z).
+- **Automatic Grid Reordering:** Smooth layout animations reposition remaining cards automatically when filters change.
 
-### 3. ✨ Destination Details Modal
-- **Physics Expansion:** Clicking any card smoothly launches a glassmorphic details modal with spring physics.
-- **Interactive Photo Gallery:** Multi-angle photo preview with thumbnail selectors.
-- **Complete Travel Insights:** Includes full description overview, weather & temperature indicators, GPS coordinates, must-experience highlights, and recommended stay length.
-- **"Add to Itinerary" Action:** Instant feedback with confetti celebration and sync status.
+### 3. 📖 Destination Details Modal
+- **Shared Layout Expansion:** Smoothly expands from the clicked card into a comprehensive details modal without harsh page reloads.
+- **Photo Gallery:** Multi-image preview with instant thumbnail switching.
+- **Travel Insights:** Climate information, estimated daily budgets, optimal duration recommendations, and top attractions.
+- **Itinerary Action:** Direct addition/removal with celebratory particle burst and flight animation.
 
-### 4. 🧳 Itinerary Management ("My Trip")
-- **Slide-out Drawer:** Easily toggleable drawer with a dynamic badge counter on the navigation bar.
-- **Browser Local Storage Persistence:** Automatically saves your itinerary locally (`localStorage`) so your custom trip plan persists after page reloads.
-- **Animated List Transitions:** Destination cards animate gracefully on entrance and removal (`AnimatePresence`).
-- **Interactive Day Duration Adjuster:** Increment or decrement days per destination with real-time budget calculations.
-- **Trip Summary Dashboard:** Live metrics displaying total planned days, estimated cost, and unique countries explored.
-- **Export / Share Travel Plan:** One-click copy formatted travel summary to your clipboard.
+### 4. 🧳 "My Trip" Itinerary Management
+- **100% Client-Side Local Storage Persistence:** Automatically saves your itinerary locally (`localStorage`) so your custom trip plan persists across browser refreshes.
+- **Interactive Drag & Reorder:** Reorder destinations using Framer Motion's `<Reorder.Group>` with spring physics.
+- **Swipe-to-Delete:** Drag items to delete with smooth removal transitions.
+- **Day & Budget Calculator:** Increment/decrement days per destination with real-time budget calculations.
+- **Export & Share:** One-click copy formatted travel summary to your clipboard.
+- **Responsive Mobile Bottom Sheet:** Transforms into a touch-friendly bottom sheet on mobile devices with drag-to-dismiss gesture.
 
-### 5. 📱 Fully Responsive & Animated UI States
-- **Mobile, Tablet, and Desktop Optimized:** Clean responsive grid layouts and touch-friendly controls.
-- **Floating Loading Skeletons:** Shimmering glass skeleton cards with staggered antigravity float during data fetching.
-- **Empty State:** Animated zero-g compass and prompt with quick filter reset when no results match.
-- **Error State:** Cosmic alert state with a one-click retry uplink.
+### 5. 🎨 Polished States
+- **Loading State:** Shimmering floating glass skeleton cards with orbiting compass indicator.
+- **Empty State:** Clean illustration with instant one-click filter reset.
+- **Error Fallback:** Interactive fallback with retry button.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+- **Framework:** Next.js 14 (App Router) — 100% Static Frontend
 - **Language:** TypeScript
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) with custom glassmorphism, glow utilities, and cosmic color palette
-- **Motion & Physics:** [Framer Motion](https://www.framer.com/motion/) (3D tilt, spring animations, AnimatePresence)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Celebration FX:** [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
+- **Styling:** Tailwind CSS & Glassmorphism
+- **Animations:** Framer Motion, GSAP, Lenis (momentum scroll)
+- **Background:** React Bits WebGL2 Particles
+- **Icons:** Lucide React
+- **Storage:** Browser `localStorage`
 
 ---
 
-## 🏃 Getting Started
+## 🚀 Getting Started
 
 ### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 2. Run the Development Server
+### 2. Run Locally
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### 3. Build for Production
 ```bash
@@ -84,15 +75,9 @@ npm run start
 
 ---
 
-## 🌐 Deploy to GitHub & Vercel
+## 📦 Deployment
 
-### Git Repository Setup:
-```bash
-git init
-git add .
-git commit -m "feat: initial commit for Trip Wise smart travel planner"
-git branch -M main
-git remote add origin https://github.com/<YOUR_USERNAME>/trip-wise.git
-git push -u origin main
-```
-*Note: Ensure your GitHub repository visibility is set to **Public** before the deadline.*
+Since **Trip Wise** is completely client-side and requires no backend, it can be deployed directly to:
+- **Vercel** (`vercel deploy`)
+- **Netlify**
+- **GitHub Pages**

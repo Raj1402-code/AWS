@@ -29,8 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <motion.div
             animate={{
-              y: [0, -4, 0],
-              rotate: [0, 8, -8, 0],
+              y: [0, -3, 0],
+              rotate: [0, 6, -6, 0],
             }}
             transition={{
               duration: 6,
@@ -49,12 +49,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-white via-cyan-100 to-purple-200 bg-clip-text text-transparent">
                 Trip Wise
               </span>
-              <span className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                Zero-G
-              </span>
             </div>
             <p className="text-xs text-slate-400 hidden sm:block">
-              Defy limits • Explore boundless worlds
+              Smart Travel Planner & Itinerary Builder
             </p>
           </div>
         </div>
@@ -67,8 +64,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             magneticRadius={50}
             className="hidden md:flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white glass-pill rounded-xl"
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span>Discover</span>
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Explore</span>
           </MagneticButton>
 
           {/* My Trip Magnetic Button */}

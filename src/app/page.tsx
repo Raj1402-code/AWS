@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { 
@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 
 import { Destination, FilterOptions, ItineraryItem } from '@/types/trip';
+import { INITIAL_DESTINATIONS } from '@/data/destinations';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
-import { FlightAnimationProvider, useFlightAnimation } from '@/components/FlightAnimation';
+import { FlightAnimationProvider } from '@/components/FlightAnimation';
 import { AntigravityBackground } from '@/components/AntigravityBackground';
 import { Navbar } from '@/components/Navbar';
 import { SearchBar } from '@/components/SearchBar';
@@ -38,7 +39,6 @@ const DEFAULT_FILTERS: FilterOptions = {
 };
 
 function TripWiseContent() {
-  const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +60,11 @@ function TripWiseContent() {
     } catch (e) {
       console.warn('Failed to load itinerary from localStorage:', e);
     }
+    // Pure frontend initial mount simulation
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 400);
+    return () => clearTimeout(timer);
   }, []);
 
   // 2. Persist Itinerary to localStorage on change
@@ -72,42 +77,59 @@ function TripWiseContent() {
     }
   };
 
-  // 3. Fetch destinations from API route
-  const fetchDestinations = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams();
-      if (filters.searchQuery) params.append('q', filters.searchQuery);
-      if (filters.continent !== 'All') params.append('continent', filters.continent);
-      if (filters.category !== 'All') params.append('category', filters.category);
-      if (filters.maxBudget < 500) params.append('maxBudget', filters.maxBudget.toString());
-      if (filters.minRating > 0) params.append('minRating', filters.minRating.toString());
-      params.append('sortBy', filters.sortBy);
+  // 3. Pure Frontend Client-side Search, Filter & Sort Logic (No Backend Needed)
+  const filteredDestinations = useMemo(() => {
+    let list = [...INITIAL_DESTINATIONS];
 
-      const res = await fetch(`/api/destinations?${params.toString()}`);
-      if (!res.ok) {
-        throw new Error(`Server returned status ${res.status}`);
-      }
-      const data = await res.json();
-      if (data.success) {
-        setDestinations(data.data);
-      } else {
-        throw new Error(data.message || 'Failed to fetch destinations');
-      }
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
+    const q = filters.searchQuery.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (dest) =>
+          dest.name.toLowerCase().includes(q) ||
+          dest.country.toLowerCase().includes(q) ||
+          dest.description.toLowerCase().includes(q) ||
+          dest.tags.some((tag) => tag.toLowerCase().includes(q)) ||
+          dest.highlights.some((h) => h.toLowerCase().includes(q))
+      );
     }
-  }, [filters]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchDestinations();
-    }, 200); // 200ms debounce
-    return () => clearTimeout(timer);
-  }, [fetchDestinations]);
+    if (filters.continent !== 'All') {
+      list = list.filter((dest) => dest.continent === filters.continent);
+    }
+
+    if (filters.category !== 'All') {
+      list = list.filter((dest) => dest.category === filters.category);
+    }
+
+    if (filters.maxBudget < 500) {
+      list = list.filter((dest) => dest.dailyBudget <= filters.maxBudget);
+    }
+
+    if (filters.minRating > 0) {
+      list = list.filter((dest) => dest.rating >= filters.minRating);
+    }
+
+    switch (filters.sortBy) {
+      case 'rating-desc':
+        list.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'budget-asc':
+        list.sort((a, b) => a.dailyBudget - b.dailyBudget);
+        break;
+      case 'budget-desc':
+        list.sort((a, b) => b.dailyBudget - a.dailyBudget);
+        break;
+      case 'name-asc':
+        list.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'featured':
+      default:
+        list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        break;
+    }
+
+    return list;
+  }, [filters]);
 
   // 4. Itinerary management handlers
   const handleToggleItinerary = (dest: Destination, e?: React.MouseEvent) => {
@@ -119,7 +141,6 @@ function TripWiseContent() {
       const filtered = itinerary.filter((item) => item.destination.id !== dest.id);
       saveItinerary(filtered);
     } else {
-      // Confetti burst
       try {
         confetti({
           particleCount: 45,
@@ -176,7 +197,7 @@ function TripWiseContent() {
 
   return (
     <div className="relative min-h-screen bg-space-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20">
-      {/* Background Physics / Particle Canvas & Drifting Ambient Orbs */}
+      {/* Background with React Bits Particles and Ambient Glowing Orbs */}
       <AntigravityBackground />
 
       {/* Floating Glass Navbar with Magnetic Buttons */}
@@ -187,8 +208,8 @@ function TripWiseContent() {
       />
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-12 pb-8 px-4 sm:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
-        {/* Anti-gravity Floating Pill with Magnetic pull */}
+      <section className="relative z-10 pt-14 pb-8 px-4 sm:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
+        {/* Floating Top Badge */}
         <motion.div
           animate={{
             y: [0, -8, 0],
@@ -200,8 +221,8 @@ function TripWiseContent() {
           }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-cyan-400/30 text-cyan-300 text-xs font-semibold shadow-glow-cyan mb-6"
         >
-          <Sparkles className="w-3.5 h-3.5 animate-spin-slow text-cyan-300" />
-          <span>Defy Gravity • Smarter Itineraries</span>
+          <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+          <span>Curated Travel Planning • Live Discovery</span>
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
         </motion.div>
 
@@ -212,9 +233,9 @@ function TripWiseContent() {
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-[1.1]"
         >
-          Explore Earth&apos;s wonders in{' '}
+          Plan your journey with{' '}
           <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-sm">
-            Zero Gravity.
+            effortless elegance.
           </span>
         </motion.h1>
 
@@ -225,7 +246,7 @@ function TripWiseContent() {
           transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mb-8"
         >
-          Discover handpicked global destinations with smooth momentum scrolling, 3D cursor tracking tilt cards, and a persistent travel canvas tailored to your wanderlust.
+          Discover handpicked global destinations, explore interactive 3D preview cards, and craft a personalized travel itinerary saved directly in your browser.
         </motion.p>
 
         {/* Quick Highlights / Stats Bar */}
@@ -238,25 +259,25 @@ function TripWiseContent() {
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
             <Globe className="w-4 h-4 text-cyan-400 mb-1" />
             <span className="text-base font-black text-white">6 Continents</span>
-            <span className="text-[10px] text-slate-400">Curated Places</span>
+            <span className="text-[10px] text-slate-400">Curated Destinations</span>
           </div>
 
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
             <Zap className="w-4 h-4 text-purple-400 mb-1" />
-            <span className="text-base font-black text-white">Instant Sync</span>
-            <span className="text-[10px] text-slate-400">Local Storage</span>
+            <span className="text-base font-black text-white">Instant Save</span>
+            <span className="text-[10px] text-slate-400">Offline Persistence</span>
           </div>
 
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
             <Compass className="w-4 h-4 text-pink-400 mb-1" />
-            <span className="text-base font-black text-white">3D Tilt Cards</span>
-            <span className="text-[10px] text-slate-400">Spring Physics</span>
+            <span className="text-base font-black text-white">3D Preview</span>
+            <span className="text-[10px] text-slate-400">Interactive Tilt</span>
           </div>
 
           <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex flex-col items-center">
             <HeartHandshake className="w-4 h-4 text-emerald-400 mb-1" />
             <span className="text-base font-black text-white">Smart Budget</span>
-            <span className="text-[10px] text-slate-400">Cost Estimator</span>
+            <span className="text-[10px] text-slate-400">Daily Calculator</span>
           </div>
         </motion.div>
 
@@ -276,7 +297,7 @@ function TripWiseContent() {
         filters={filters}
         onChangeFilters={setFilters}
         onResetFilters={handleResetFilters}
-        totalResults={destinations.length}
+        totalResults={filteredDestinations.length}
       />
 
       {/* Main Destination Exploration Grid with Automatic Grid Reordering */}
@@ -286,11 +307,11 @@ function TripWiseContent() {
 
         {/* Error State */}
         {!loading && error && (
-          <ErrorState message={error} onRetry={fetchDestinations} />
+          <ErrorState message={error} onRetry={() => setError(null)} />
         )}
 
         {/* Empty State */}
-        {!loading && !error && destinations.length === 0 && (
+        {!loading && !error && filteredDestinations.length === 0 && (
           <EmptyState
             onReset={handleResetFilters}
             searchQuery={filters.searchQuery}
@@ -298,13 +319,13 @@ function TripWiseContent() {
         )}
 
         {/* Destination Cards Layout with Automatic Reordering and Smooth Morphing */}
-        {!loading && !error && destinations.length > 0 && (
+        {!loading && !error && filteredDestinations.length > 0 && (
           <motion.div
             layout
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
           >
             <AnimatePresence mode="popLayout">
-              {destinations.map((destination, index) => {
+              {filteredDestinations.map((destination, index) => {
                 const isSaved = itinerary.some(
                   (item) => item.destination.id === destination.id
                 );
@@ -348,7 +369,7 @@ function TripWiseContent() {
         onSelectDestination={(dest) => setSelectedDestination(dest)}
       />
 
-      {/* Antigravity Footer */}
+      {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 mt-20 py-8 px-4 sm:px-8 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -356,13 +377,13 @@ function TripWiseContent() {
               <Compass className="w-3.5 h-3.5" />
             </div>
             <span className="font-bold text-slate-200">Trip Wise</span>
-            <span>— The Antigravity Travel Planner</span>
+            <span>— Smart Travel Planner</span>
           </div>
 
-          <div className="flex items-center gap-4 text-slate-500">
-            <span>Powered by Next.js, Tailwind CSS, Framer Motion, GSAP & Lenis</span>
+          <div className="flex items-center gap-4 text-slate-400">
+            <span>Built with Next.js, Tailwind CSS & Framer Motion</span>
             <span>•</span>
-            <span className="text-cyan-400/80">Zero-G Edition</span>
+            <span className="text-cyan-400 font-medium">Trip Wise Travel</span>
           </div>
         </div>
       </footer>

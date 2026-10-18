@@ -7,10 +7,10 @@ import { Plane, Compass, Sparkles } from 'lucide-react';
 export const LoadingSkeleton: React.FC = () => {
   return (
     <div className="space-y-12">
-      {/* Central Orbiting Plane / Compass Zero-G Loader */}
+      {/* Central Orbiting Plane / Compass Loader */}
       <div className="flex flex-col items-center justify-center py-6">
         <div className="relative w-32 h-32 flex items-center justify-center">
-          {/* Pulsating Cosmic Glow Core */}
+          {/* Pulsating Glow Core */}
           <motion.div
             animate={{
               scale: [1, 1.35, 1],
@@ -24,7 +24,7 @@ export const LoadingSkeleton: React.FC = () => {
             className="absolute w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500/30 to-purple-500/30 blur-xl"
           />
 
-          {/* Outer Celestial Ring */}
+          {/* Outer Ring */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
@@ -53,18 +53,18 @@ export const LoadingSkeleton: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Telemetry Status Message */}
+        {/* Loading Message */}
         <motion.div
           animate={{ opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="mt-4 flex items-center gap-2 text-xs font-semibold text-cyan-300 tracking-wider uppercase"
         >
-          <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-spin" />
-          <span>Calibrating Zero-G Coordinates...</span>
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Curating Destinations...</span>
         </motion.div>
       </div>
 
-      {/* Shimmering Glassmorphic Skeleton Cards Floating in Orbit */}
+      {/* Shimmering Glassmorphic Skeleton Cards Floating */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
         {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
